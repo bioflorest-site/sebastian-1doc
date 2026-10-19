@@ -47,7 +47,8 @@
     </section>
 
     <section class="view" id="view-vistoria">
-      <div class="form-intro"><div><span class="eyebrow">MODELO DE PARECER TÉCNICO</span><h2>Novo parecer de análise técnica</h2><p>Preencha os dados do processo. O painel organiza o texto no modelo do parecer de referência.</p></div><span class="draft-badge">RASCUNHO</span></div>
+      <div class="form-intro"><div><span class="eyebrow">MODELO DE PARECER TÉCNICO</span><h2>Novo parecer de análise técnica</h2><p>Preencha os dados do processo. Os campos do formulário substituem automaticamente as variáveis do modelo.</p></div><span class="draft-badge">RASCUNHO</span></div>
+      <details class="form-card template-panel"><summary>Ver modelo-base com variáveis &lt;&lt;assim&gt;&gt;</summary><p class="muted">Cada variável entre sinais &lt;&lt; &gt;&gt; é preenchida pelo campo correspondente do formulário.</p><pre id="report-template" class="document-preview"></pre></details>
       <form id="inspection-form">
         <div class="form-card">
           <h3>Identificação do processo e do requerente</h3>
@@ -105,6 +106,7 @@
           <label class="upload-zone"><input id="evidencias" type="file" multiple accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt"><span class="upload-icon">↑</span><strong>Escolha arquivos </strong><small>Fotos, documentos, planilhas e PDFs</small></label>
           <div id="file-list" class="file-list"></div>
         </div>
+        <details class="form-card template-panel"><summary>Prévia do parecer preenchido</summary><p class="muted">A prévia acompanha as informações digitadas e é o mesmo texto salvo e exportado pelo painel.</p><pre id="report-preview" class="document-preview"></pre></details>
         <div class="form-actions"><button type="button" class="secondary" id="clear-form">Limpar formulário</button><button type="submit" class="primary">Salvar cadastro e gerar parecer →</button></div>
       </form>
     </section>
@@ -131,3 +133,4 @@
   <script type="module" src="app.js"></script>
 </body>
 </html>
+

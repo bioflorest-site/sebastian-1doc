@@ -16,15 +16,83 @@ $("#evidencias").addEventListener("change",e=>{filesSelected=[...e.target.files]
 function renderFiles(){$("#file-list").innerHTML=filesSelected.map(f=>`<div class="file-item"><span>▧ ${escapeHtml(f.name)}</span><small>${(f.size/1024).toFixed(0)} KB · anexo selecionado</small></div>`).join("")}
 function escapeHtml(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function getForm(){const data=Object.fromEntries(new FormData($("#inspection-form")).entries());data.arquivos=filesSelected.map(f=>({name:f.name,size:f.size,type:f.type}));return data}
-function makeDraft(d){
- const val=(x)=>String(x||"").trim()||"Não informado";
+const REPORT_TEMPLATE=`PARECER DE ANÁLISE TÉCNICA AMBIENTAL
+RASCUNHO PARA REVISÃO TÉCNICA
+
+PROCESSO: <<processo>> · <<origem>>
+REQUERENTE / EMPREENDIMENTO: <<interessado>>
+CPF / CNPJ: <<documento_requerente>>
+ENDEREÇO DO REQUERENTE: <<endereco_requerente>>
+ENDEREÇO DO EMPREENDIMENTO: <<endereco_empreendimento>>
+MUNICÍPIO: <<municipio>> · ZONA: <<zona>>
+ATIVIDADE: <<atividade>> · PORTE: <<porte>> · POTENCIAL POLUIDOR: <<potencial_poluidor>>
+
+1. OBJETO DO REQUERIMENTO
+<<objetivo>>
+
+Data do requerimento: <<data_requerimento>>
+Setor responsável pela análise: <<setor_analise>>
+Responsável pela análise documental: <<responsavel_analise>>
+
+2. LOCALIZAÇÃO E VISTORIA TÉCNICA
+Data e horário da vistoria: <<data_vistoria>> · <<hora_vistoria>>
+Responsável técnico: <<tecnico>> · Registro: <<matricula_tecnico>>
+Coordenadas / referência: <<coordenadas_completas>>
+
+3. DOCUMENTOS E ESTUDO APRESENTADOS
+<<estudo_apresentado>>
+
+4. ANÁLISE TÉCNICA E CARACTERIZAÇÃO AMBIENTAL
+Fatos e condições observadas:
+<<observacoes>>
+
+Caracterização ambiental:
+<<caracterizacao_ambiental>>
+
+Solo, acesso e alterações observadas:
+<<condicoes_solo>>
+
+Possíveis impactos ou não conformidades:
+<<impactos>>
+
+5. RECOMENDAÇÕES TÉCNICAS
+<<recomendacoes>>
+
+Documentos ou etapas pendentes:
+<<etapas_pendentes>>
+
+6. CONSIDERAÇÕES E CONCLUSÃO
+<<conclusao>>
+
+<<local_e_data_parecer>>
+
+________________________________________
+<<assinante>>
+<<cargo_assinante>>
+Matrícula / registro: <<registro_assinante>>
+
+ANEXO · REGISTRO FOTOGRÁFICO E DOCUMENTAL
+<<anexos>>
+
+<<alertas_de_conferencia>>
+NOTA DE REVISÃO
+Este rascunho deve ser conferido pelo profissional responsável. Valide datas, documentos, fatos observados, referências legais, recomendações e conclusão antes de assinar ou usar oficialmente.`;
+function reportVariables(d){
+ const val=x=>String(x??"").trim()||"Não informado";
+ const formatDate=x=>{if(!x)return "Não informado";const [y,m,day]=x.split("-");return y&&m&&day?`${day}/${m}/${y}`:x};
  const coords=[d.coordenadas,d.zona_utm?`Zona UTM ${d.zona_utm}`:"",d.utm_y?`Y: ${d.utm_y}`:"",d.utm_x?`X: ${d.utm_x}`:""].filter(Boolean).join(" · ");
- const annex=d.arquivos?.length?d.arquivos.map((f,i)=>`${i+1}. ${f.name}`).join("\n"):"Nenhum arquivo anexado.";
  const warnings=[];
- if(d.data_requerimento&&d.data_parecer&&d.data_parecer<d.data_requerimento)warnings.push('A data do parecer antecede a data do requerimento.');
- if(d.data&&d.data_parecer&&d.data_parecer<d.data)warnings.push('A data do parecer antecede a data da vistoria.');
- return `RELATÓRIO DE VISTORIA E PARECER TÉCNICO AMBIENTAL\nRASCUNHO PARA REVISÃO TÉCNICA\n\nPROCESSO: ${val(d.processo)} · ${val(d.origem)}\nREQUERENTE: ${val(d.interessado)}\nCPF / CNPJ: ${val(d.documento_requerente)}\nENDEREÇO DO REQUERENTE: ${val(d.endereco_requerente)}\nENDEREÇO DO EMPREENDIMENTO: ${val(d.endereco_empreendimento)}\nMUNICÍPIO: ${val(d.municipio)} · ZONA: ${val(d.zona)}\nCOORDENADAS: ${val(coords)}\nATIVIDADE SOLICITADA: ${val(d.atividade)}\nPORTE: ${val(d.porte)} · POTENCIAL POLUIDOR: ${val(d.potencial_poluidor)}\n\n1. INTRODUÇÃO\n${val(d.objetivo)}\n\nData do requerimento: ${val(d.data_requerimento)}\nAnálise documental / setor: ${val(d.setor_analise)}\nResponsável pela análise documental: ${val(d.responsavel_analise)}\n\n2. ANÁLISE TÉCNICA\nData e horário da vistoria: ${val(d.data)} · ${val(d.hora_vistoria)}\nResponsável técnico: ${val(d.tecnico)} · ${val(d.matricula_tecnico)}\n\nDescrição do estudo apresentado\n${val(d.estudo_apresentado)}\n\nFatos e condições observadas\n${val(d.observacoes)}\n\nCaracterização ambiental\n${val(d.caracterizacao_ambiental)}\n\nSolo, acesso e alterações observadas\n${val(d.condicoes_solo)}\n\nPossíveis impactos / não conformidades\n${val(d.impactos)}\n\n4. RECOMENDAÇÕES TÉCNICAS\n${val(d.recomendacoes)}\n\nEtapas e documentos pendentes\n${val(d.etapas_pendentes)}\n\n5. CONSIDERAÇÕES E CONCLUSÃO\n${val(d.conclusao)}\n\n${val(d.municipio)}${d.data_parecer?`, ${d.data_parecer}`:""}.\n\n${val(d.assinante)}\n${val(d.cargo_assinante)}\nMatrícula / registro: ${val(d.registro_assinante)}\n\nANEXO · REGISTRO FOTOGRÁFICO E DOCUMENTAL\n${annex}\n\n${warnings.length?`PONTOS PARA CONFERÊNCIA\n${warnings.map((w,i)=>`${i+1}. ${w}`).join("\n")}\n\n`:""}NOTA DE REVISÃO\nEste documento é um rascunho estruturado com os dados cadastrados. Confira datas, documentos, fatos observados, referências legais, recomendações e conclusão com o profissional responsável antes de assinar, protocolar ou usar oficialmente.\n`;
+ if(d.data_requerimento&&d.data_parecer&&d.data_parecer<d.data_requerimento)warnings.push("A data do parecer antecede a data do requerimento.");
+ if(d.data&&d.data_parecer&&d.data_parecer<d.data)warnings.push("A data do parecer antecede a data da vistoria.");
+ const attachments=d.arquivos?.length?d.arquivos.map((f,i)=>`${i+1}. ${f.name}`).join("\n"):"Nenhum arquivo anexado.";
+ return {processo:val(d.processo),origem:val(d.origem),interessado:val(d.interessado),documento_requerente:val(d.documento_requerente),endereco_requerente:val(d.endereco_requerente),endereco_empreendimento:val(d.endereco_empreendimento),municipio:val(d.municipio),zona:val(d.zona),atividade:val(d.atividade),porte:val(d.porte),potencial_poluidor:val(d.potencial_poluidor),objetivo:val(d.objetivo),data_requerimento:formatDate(d.data_requerimento),setor_analise:val(d.setor_analise),responsavel_analise:val(d.responsavel_analise),data_vistoria:formatDate(d.data),hora_vistoria:val(d.hora_vistoria),tecnico:val(d.tecnico),matricula_tecnico:val(d.matricula_tecnico),coordenadas_completas:val(coords),estudo_apresentado:val(d.estudo_apresentado),observacoes:val(d.observacoes),caracterizacao_ambiental:val(d.caracterizacao_ambiental),condicoes_solo:val(d.condicoes_solo),impactos:val(d.impactos),recomendacoes:val(d.recomendacoes),etapas_pendentes:val(d.etapas_pendentes),conclusao:val(d.conclusao),local_e_data_parecer:`${val(d.municipio)}${d.data_parecer?`, ${formatDate(d.data_parecer)}`:""}.`,assinante:val(d.assinante),cargo_assinante:val(d.cargo_assinante),registro_assinante:val(d.registro_assinante),anexos:attachments,alertas_de_conferencia:warnings.length?`PONTOS PARA CONFERÊNCIA\n${warnings.map((w,i)=>`${i+1}. ${w}`).join("\n")}`:"PONTOS PARA CONFERÊNCIA\nNenhuma inconsistência de datas foi identificada automaticamente."};
 }
+function fillReportTemplate(template,d){const values=reportVariables(d);return template.replace(/<<([a-z0-9_]+)>>/gi,(_,key)=>values[key]??`<<${key}>>`)}
+function makeDraft(d){return fillReportTemplate(REPORT_TEMPLATE,d)}
+function updateReportPreview(){const templateEl=$("#report-template"),previewEl=$("#report-preview");if(templateEl)templateEl.textContent=REPORT_TEMPLATE;if(previewEl)previewEl.textContent=makeDraft(getForm())}
+$("#inspection-form").addEventListener("input",updateReportPreview);
+$("#inspection-form").addEventListener("change",updateReportPreview);
+updateReportPreview();
 $("#inspection-form").addEventListener("submit",async e=>{
  e.preventDefault();const button=e.submitter;button.disabled=true;const uploaded=[];let saved=false;
  try {
@@ -52,3 +120,4 @@ $('#auth-form').addEventListener('submit',async e=>{e.preventDefault();const b=e
 $('#logout').addEventListener('click',async()=>{const {error}=await db.auth.signOut();if(error){toast(error.message);return}await setSession(null)});
 db.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT')void setSession(null)});
 const {data:{session}}=await db.auth.getSession();await setSession(session);
+
