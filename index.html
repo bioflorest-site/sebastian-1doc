@@ -50,7 +50,7 @@ button:disabled{opacity:.6;cursor:wait}
 </style>
 </head>
 <body>
-<header><h1>Gerador de Parecer Técnico Ambiental</h1><p>Preencha os campos e baixe o parecer em Word, já no modelo oficial.</p></header>
+<header><h1>SEBASTIAN 1Doc · Parecer Técnico Ambiental</h1><p>Preencha os dados do processo e gere o documento no formato do modelo original.</p></header>
 <main>
 <section id="auth-panel">
   <h2>Acesse seu painel privado</h2>
@@ -184,7 +184,9 @@ async function generateDocument(shouldDownload=true){
     let x=await zip.file("word/document.xml").async("string");
     let rels=await zip.file("word/_rels/document.xml.rels").async("string");
     let ct=await zip.file("[Content_Types].xml").async("string");
-    if(v.resultado_parecer==="desfavoravel"){
+    if(v.resultado_parecer==="favoravel"){
+      x=x.replace("recomendo favorável pela emissão da Autorização ambiental para","recomendo a emissão da Autorização ambiental para");
+    }else if(v.resultado_parecer==="desfavoravel"){
       x=x.replace("recomendo favorável pela emissão da Autorização ambiental para","recomendo o indeferimento da emissão da Autorização ambiental para");
       x=x.replace("<w:t>viabilidade</w:t>","<w:t>inviabilidade</w:t>");
       x=x.replace("parecer favorável à concessão","parecer desfavorável à concessão");
@@ -207,7 +209,7 @@ async function generateDocument(shouldDownload=true){
         const dr='<w:drawing><wp:inline distT="0" distB="0" distL="0" distR="0"><wp:extent cx="'+cx+'" cy="'+cy+'"/><wp:docPr id="'+(900+n)+'" name="Foto '+n+'"/><a:graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:nvPicPr><pic:cNvPr id="'+(900+n)+'" name="foto'+n+'.jpg"/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed="rIdFoto'+n+'"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="'+cx+'" cy="'+cy+'"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing>';
         x=x.replace(ph,()=>dr).replace(cp,()=>leg?"Imagem: "+esc(leg):"");
       }else{
-        x=x.replace(ph,"<w:t>@@VAZIA@@</w:t>").replace(cp,"");
+        x=x.replace(ph,n===1&&!Object.keys(photos).length?"<w:t>Nenhum registro fotográfico anexado.</w:t>":"<w:t>@@VAZIA@@</w:t>").replace(cp,"");
       }
     }
     if(!/Extension="jpg"/i.test(ct)) ct=ct.replace("<Default ",'<Default Extension="jpg" ContentType="image/jpeg"/><Default ');
