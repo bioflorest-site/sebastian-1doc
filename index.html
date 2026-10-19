@@ -131,6 +131,48 @@ S.forEach(([t,fs])=>{
   });
   form.append(s);
 });
+const ufInput=$("uf"), municipioInput=$("municipio");
+const municipiosLista=document.createElement("datalist");
+municipiosLista.id="municipios-uf";
+municipioInput.setAttribute("list",municipiosLista.id);
+municipioInput.setAttribute("autocomplete","off");
+municipioInput.after(municipiosLista);
+ufInput.maxLength=2;
+const ufs=new Set("AC AL AP AM BA CE DF ES GO MA MT MS MG PA PB PR PE PI RJ RN RS RO RR SC SP SE TO".split(" "));
+const municipiosCache=new Map();
+let municipiosUF=null, municipiosRequest=0;
+async function atualizarMunicipios(preservar=false){
+  const uf=ufInput.value.trim().toUpperCase();
+  ufInput.value=uf;
+  if(uf===municipiosUF)return;
+  municipiosUF=uf;
+  const request=++municipiosRequest;
+  if(!preservar)municipioInput.value="";
+  municipiosLista.replaceChildren();
+  municipioInput.placeholder=ufs.has(uf)?"Carregando municípios…":"Informe uma UF válida";
+  if(!ufs.has(uf))return;
+  try{
+    let nomes=municipiosCache.get(uf);
+    if(!nomes){
+      const resposta=await fetch("https://servicodados.ibge.gov.br/api/v1/localidades/estados/"+uf+"/municipios?orderBy=nome");
+      if(!resposta.ok)throw new Error("Lista indisponível");
+      const dados=await resposta.json();
+      if(!Array.isArray(dados)||!dados.length)throw new Error("Lista indisponível");
+      nomes=dados.map(m=>m.nome).filter(n=>typeof n==="string").sort((a,b)=>a.localeCompare(b,"pt-BR"));
+      municipiosCache.set(uf,nomes);
+    }
+    if(request!==municipiosRequest)return;
+    municipiosLista.replaceChildren(...nomes.map(nome=>{
+      const option=document.createElement("option");option.value=nome;return option;
+    }));
+    municipioInput.placeholder="Selecione ou digite o município";
+  }catch{
+    if(request===municipiosRequest){municipioInput.placeholder="Digite o município (lista indisponível)";municipiosUF=null;}
+  }
+}
+ufInput.addEventListener("input",()=>void atualizarMunicipios());
+ufInput.addEventListener("change",()=>void atualizarMunicipios());
+void atualizarMunicipios(true);
 const outcomeSection=document.createElement("section");
 outcomeSection.innerHTML="<h2>Manifestação técnica</h2><p class='hint'>Escolha o encaminhamento que corresponde à análise profissional. O texto de recomendação e conclusão será ajustado no modelo.</p><label for='resultado_parecer'>Resultado do parecer *</label><select id='resultado_parecer' required><option value=''>Selecione</option><option value='favoravel'>Favorável</option><option value='desfavoravel'>Desfavorável</option><option value='diligencia'>Pendente de diligência/complementação</option></select>";
 form.append(outcomeSection);
@@ -277,7 +319,7 @@ $("#save").onclick=async()=>{
  }catch(e){$("#msg").textContent="Não foi possível salvar: "+e.message}
  finally{b.disabled=false;$("#gen").disabled=false}
 };
-$("#clr").onclick=()=>{if(!confirm("Apagar os campos preenchidos?"))return;document.querySelectorAll("#form input,#form textarea,#form select").forEach(i=>{i.value=""});for(let n=1;n<=NF;n++){delete photos[n];const im=$("#p"+n);if(im){if(im.src)URL.revokeObjectURL(im.src);im.removeAttribute("src");im.style.display="none";}}latestGenerated=null;$("#msg").textContent="Formulário limpo."};
+$("#clr").onclick=()=>{if(!confirm("Apagar os campos preenchidos?"))return;document.querySelectorAll("#form input,#form textarea,#form select").forEach(i=>{i.value=""});void atualizarMunicipios();for(let n=1;n<=NF;n++){delete photos[n];const im=$("#p"+n);if(im){if(im.src)URL.revokeObjectURL(im.src);im.removeAttribute("src");im.style.display="none";}}latestGenerated=null;$("#msg").textContent="Formulário limpo."};
 $("#auth-form").addEventListener("submit",async e=>{e.preventDefault();const b=e.submitter;b.disabled=true;$("#auth-message").textContent="Entrando…";try{const {data,error}=await db.auth.signInWithPassword({email:$("#email").value,password:$("#password").value});if(error)throw error;$("#password").value="";await setSession(data.session)}catch(error){$("#auth-message").textContent=error.message}finally{b.disabled=false}});
 async function setSession(session){currentUser=session?.user||null;$("#workspace").hidden=!currentUser;$("#auth-panel").hidden=!!currentUser;$("#account-email").textContent=currentUser?.email||"";if(currentUser){try{await loadReports()}catch(e){$("#msg").textContent="Falha ao carregar: "+e.message}}}
 $("#logout").addEventListener("click",async()=>{const {error}=await db.auth.signOut();if(error)$("#msg").textContent=error.message;else await setSession(null)});
