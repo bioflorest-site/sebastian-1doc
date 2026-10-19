@@ -47,37 +47,65 @@
     </section>
 
     <section class="view" id="view-vistoria">
-      <div class="form-intro"><div><span class="eyebrow">REGISTRO DE CAMPO</span><h2>Nova vistoria ambiental</h2><p>Preencha os dados disponíveis. Campos com * são obrigatórios.</p></div><span class="draft-badge">RASCUNHO</span></div>
+      <div class="form-intro"><div><span class="eyebrow">MODELO DE PARECER TÉCNICO</span><h2>Novo parecer de análise técnica</h2><p>Preencha os dados do processo. O painel organiza o texto no modelo do parecer de referência.</p></div><span class="draft-badge">RASCUNHO</span></div>
       <form id="inspection-form">
         <div class="form-card">
-          <h3>1. Identificação do processo</h3>
+          <h3>Identificação do processo e do requerente</h3>
           <div class="form-grid">
             <label>Número do processo / protocolo *<input name="processo" required placeholder="Ex.: 00000.000000/2026-00"></label>
             <label>Origem / sistema<select name="origem"><option>1Doc (informação manual)</option><option>Processo externo</option><option>Demanda de fiscalização</option><option>Outro</option></select></label>
             <label>Interessado / empreendimento *<input name="interessado" required placeholder="Nome da pessoa ou empresa"></label>
+            <label>CPF / CNPJ do requerente<input name="documento_requerente" placeholder="Documento do requerente"></label>
+            <label>Endereço do requerente<input name="endereco_requerente" placeholder="Rua, número, bairro e município"></label>
             <label>Município *<select name="municipio" required><option value="">Selecione</option><option>Macapá</option><option>Santana</option><option>Tartarugalzinho</option><option>Porto Grande</option><option>Mazagão</option><option>Oiapoque</option><option>Outro município do Amapá</option><option>Outro</option></select></label>
+            <label>Data do requerimento<input name="data_requerimento" type="date"></label>
+            <label>Zona do empreendimento<input name="zona" placeholder="Urbana ou rural"></label>
+            <label>Endereço do empreendimento<input name="endereco_empreendimento" placeholder="Localização e referência de acesso"></label>
             <label>Data da vistoria *<input name="data" type="date" required></label>
+            <label>Horário da vistoria<input name="hora_vistoria" type="time"></label>
             <label>Responsável técnico<input name="tecnico" placeholder="Nome e registro profissional"></label>
-            <label class="wide">Objetivo da vistoria *<textarea name="objetivo" required rows="2" placeholder="Descreva a finalidade da vistoria"></textarea></label>
+            <label>Matrícula / registro profissional<input name="matricula_tecnico" placeholder="Matrícula funcional ou registro"></label>
+            <label>Setor responsável pela análise<input name="setor_analise" placeholder="Departamento / setor"></label>
+            <label>Responsável pela análise documental<input name="responsavel_analise" placeholder="Nome do responsável"></label>
+            <label class="wide">Objetivo e pedido do requerente *<textarea name="objetivo" required rows="3" placeholder="Descreva o pedido, as atividades e a finalidade do parecer"></textarea></label>
           </div>
         </div>
         <div class="form-card">
-          <h3>2. Localização e constatações</h3>
+          <h3>Localização e atividade</h3>
           <div class="form-grid">
-            <label>Coordenadas / referência<input name="coordenadas" placeholder="Ex.: latitude, longitude ou ponto de referência"></label>
-            <label>Tipo de atividade<select name="atividade"><option>Selecione</option><option>Limpeza de área</option><option>Supressão vegetal</option><option>Licenciamento ambiental</option><option>Recursos hídricos / poço</option><option>Resíduos sólidos</option><option>Agropecuária</option><option>Outra atividade</option></select></label>
-            <label class="wide">Descrição das condições observadas *<textarea name="observacoes" required rows="5" placeholder="Registre fatos observáveis, dimensões, condições ambientais e evidências. Separe fatos de interpretações."></textarea></label>
-            <label class="wide">Possíveis impactos / não conformidades<textarea name="impactos" rows="3" placeholder="Descreva apenas o que foi observado ou indique que precisa de apuração"></textarea></label>
-            <label class="wide">Recomendações iniciais<textarea name="recomendacoes" rows="3" placeholder="Medidas sugeridas para avaliação técnica"></textarea></label>
+            <label>Coordenadas / referência<input name="coordenadas" placeholder="Latitude/longitude ou referência de campo"></label>
+            <label>Zona UTM<input name="zona_utm" placeholder="Ex.: 22"></label>
+            <label>Coordenada UTM Y / latitude<input name="utm_y" placeholder="Ex.: 9994276.67 m S"></label>
+            <label>Coordenada UTM X / longitude<input name="utm_x" placeholder="Ex.: 478295.09 m E"></label>
+            <label>Atividade solicitada<input name="atividade" placeholder="Atividades requeridas"></label>
+            <label>Porte<input name="porte" placeholder="Ex.: baixo"></label>
+            <label>Potencial poluidor<input name="potencial_poluidor" placeholder="Ex.: baixo"></label>
+            <label class="wide">Descrição do estudo ou documentos apresentados<textarea name="estudo_apresentado" rows="3" placeholder="Síntese dos documentos apresentados no processo"></textarea></label>
+            <label class="wide">Análise técnica e fatos observados *<textarea name="observacoes" required rows="6" placeholder="Descreva a vistoria, as estruturas existentes, os fatos observáveis e as evidências. Separe fatos de interpretações."></textarea></label>
+            <label class="wide">Caracterização ambiental<textarea name="caracterizacao_ambiental" rows="4" placeholder="Vegetação, estágio de regeneração, áreas alagadas, cursos d'água e outros elementos"></textarea></label>
+            <label class="wide">Solo, acesso e alterações observadas<textarea name="condicoes_solo" rows="3" placeholder="Condições do solo, movimentações anteriores, aterramentos e acesso"></textarea></label>
+            <label class="wide">Possíveis impactos / não conformidades<textarea name="impactos" rows="3" placeholder="Descreva apenas o que foi observado ou indique o que precisa de apuração"></textarea></label>
           </div>
         </div>
         <div class="form-card">
-          <h3>3. Evidências anexas</h3>
+          <h3>Recomendações e conclusão técnica</h3>
+          <div class="form-grid">
+            <label class="wide">Recomendações técnicas<textarea name="recomendacoes" rows="5" placeholder="Informe medidas, condicionantes e providências recomendadas"></textarea></label>
+            <label class="wide">Documentos ou etapas pendentes<textarea name="etapas_pendentes" rows="3" placeholder="Documentos a solicitar e próximas etapas do processo"></textarea></label>
+            <label class="wide">Considerações e conclusão<textarea name="conclusao" rows="5" placeholder="Conclusão proposta para revisão do responsável técnico. Não declare viabilidade sem análise suficiente."></textarea></label>
+            <label>Data do parecer<input name="data_parecer" type="date"></label>
+            <label>Nome para assinatura<input name="assinante" placeholder="Profissional responsável pelo parecer"></label>
+            <label>Função / cargo<input name="cargo_assinante" placeholder="Ex.: Consultora Técnica"></label>
+            <label>Matrícula / registro<input name="registro_assinante" placeholder="Identificação funcional ou profissional"></label>
+          </div>
+        </div>
+        <div class="form-card">
+          <h3>Registro fotográfico e documentos anexos</h3>
           <p class="muted">Selecione fotografias, PDFs ou outros documentos. Os arquivos são salvos em armazenamento privado. Limite de 20 MB por arquivo.</p>
           <label class="upload-zone"><input id="evidencias" type="file" multiple accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt"><span class="upload-icon">↑</span><strong>Escolha arquivos </strong><small>Fotos, documentos, planilhas e PDFs</small></label>
           <div id="file-list" class="file-list"></div>
         </div>
-        <div class="form-actions"><button type="button" class="secondary" id="clear-form">Limpar formulário</button><button type="submit" class="primary">Salvar vistoria e preparar relatório →</button></div>
+        <div class="form-actions"><button type="button" class="secondary" id="clear-form">Limpar formulário</button><button type="submit" class="primary">Salvar cadastro e gerar parecer →</button></div>
       </form>
     </section>
 

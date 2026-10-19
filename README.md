@@ -1,6 +1,6 @@
 # SEBASTIAN 1Doc
 
-Dashboard de vistorias ambientais com login Supabase, relatórios, indicadores e anexos privados (20 MB por arquivo). Todos os campos originais são guardados em data (JSON), junto ao texto do relatório.
+Dashboard de vistorias ambientais com login Supabase, formulário estruturado de parecer técnico, indicadores e anexos privados (20 MB por arquivo). O cadastro reúne identificação do processo e requerente, localização/UTM, atividade, análise, recomendações, conclusão, assinatura e evidências. Os campos ficam em data (JSON), junto ao parecer em texto.
 
 ## Acesso
 Projeto: https://supabase.com/dashboard/project/xehdrkgazzupkddhbjav
@@ -15,4 +15,4 @@ Banco e anexos são restritos ao proprietário por políticas RLS. cloud.js cont
 ## Limites e validação
 Não há conexão com API 1Doc, IA ou consulta jurídica automática. Relatórios exigem revisão profissional. Os arquivos fornecidos não contêm registros reais: o banco começa vazio. Registros antigos do navegador não são importados automaticamente. Cada usuário vê seus próprios dados.
 
-Sintaxe JavaScript e políticas do banco verificadas. O fluxo completo de login e anexos ainda requer validação com um usuário criado pelo administrador.
+O cadastro usa o esquema reports já implantado no Supabase; não exige migração. A chave no navegador é publicável e as políticas RLS protegem registros e anexos por usuário. O conteúdo de um parecer real deve permanecer no Supabase privado, nunca no código público.
