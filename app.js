@@ -8,7 +8,7 @@ let filesSelected = [];
 async function loadReports(){const {data,error}=await db.from('reports').select('*').order('created_at',{ascending:false});if(error)throw error;reports=data.map(r=>({...r,created:r.created_at}));updateMetrics()}
 function updateMetrics(){$("#metric-vistorias").textContent=reports.length;$("#metric-relatorios").textContent=reports.length;renderReports()}
 function toast(msg){const el=$("#toast");el.textContent=msg;el.classList.add("show");setTimeout(()=>el.classList.remove("show"),3200)}
-function showView(name){$$(".view").forEach(v=>v.classList.toggle("show",v.id==="view-"+name));$$(".nav-item").forEach(b=>b.classList.toggle("active",b.dataset.view===name));const titles={inicio:"Painel inicial",vistoria:"Nova vistoria",relatorios:"Relatórios",integracao:"Integração 1Doc"};$("#page-title").textContent=titles[name]||"SEBASTIAN 1Doc";window.scrollTo({top:0,behavior:"smooth"})}
+function showView(name){$$(".view").forEach(v=>v.classList.toggle("show",v.id==="view-"+name));$$(".nav-item").forEach(b=>b.classList.toggle("active",b.dataset.view===name));const titles={inicio:"Painel inicial",vistoria:"Novo parecer técnico",relatorios:"Relatórios e pareceres",integracao:"Integração 1Doc"};$("#page-title").textContent=titles[name]||"SEBASTIAN 1Doc";window.scrollTo({top:0,behavior:"smooth"})}
 $$(".nav-item").forEach(b=>b.addEventListener("click",()=>showView(b.dataset.view)));
 $$("[data-go]").forEach(b=>b.addEventListener("click",()=>showView(b.dataset.go)));
 
