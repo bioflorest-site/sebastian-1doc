@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SEBASTIAN 1Doc | Inteligência Ambiental Integrada</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand"><div class="brand-mark">S</div><div><strong>SEBASTIAN</strong><span>1Doc</span></div></div>
+    <p class="side-caption">INTELIGÊNCIA AMBIENTAL</p>
+    <nav>
+      <button class="nav-item active" data-view="inicio">▦ <span>Painel inicial</span></button>
+      <button class="nav-item" data-view="vistoria">◎ <span>Nova vistoria</span></button>
+      <button class="nav-item" data-view="relatorios">▤ <span>Relatórios</span></button>
+      <button class="nav-item" data-view="integracao">↔ <span>Integração 1Doc</span></button>
+    </nav>
+    <div class="side-bottom"><span class="status-dot"></span> Banco de dados Supabase<br><small>Acesso privado por usuário</small></div>
+  </aside>
+
+  <main class="main">
+<section class="form-card" id="auth-panel" style="margin-top:24px"><h2>Acesse seu painel</h2><p>Entre para consultar e salvar suas vistorias e evidências.</p><form id="auth-form" class="form-grid"><label>E-mail<input id="email" type="email" autocomplete="username" required></label><label>Senha<input id="password" type="password" autocomplete="current-password" minlength="8" required></label><button class="primary" type="submit">Entrar</button></form><p id="auth-message" role="status"></p><p class="muted">O administrador deve criar seu acesso em Supabase → Authentication → Users.</p></section>
+<div id="workspace" hidden>
+    <header class="topbar">
+      <div><span class="eyebrow">PLATAFORMA AMBIENTAL</span><h1 id="page-title">Painel inicial</h1></div>
+      <div class="user-chip"><div class="avatar">RT</div><div><strong>Responsável técnico</strong><small><span id="account-email"></span> <button id="logout" class="secondary">Sair</button></small></div></div>
+    </header>
+
+    <section class="view show" id="view-inicio">
+      <div class="hero">
+        <div><span class="hero-tag">FLUXO TÉCNICO INTEGRADO</span><h2>Da vistoria ao parecer,<br>com rastreabilidade.</h2><p>Organize evidências de campo, estruture a análise ambiental e prepare documentos técnicos para revisão profissional.</p><button class="primary" data-go="vistoria">＋ Iniciar vistoria</button></div>
+        <div class="hero-art" aria-hidden="true"><div class="orb orb1"></div><div class="orb orb2"></div><div class="leaf">⌁</div><div class="art-label">AMBIENTE · EVIDÊNCIA · ANÁLISE</div></div>
+      </div>
+      <div class="metrics">
+        <article class="metric"><span class="metric-icon">◎</span><span class="metric-label">Vistorias registradas</span><strong id="metric-vistorias">0</strong><small>Na sua conta</small></article>
+        <article class="metric"><span class="metric-icon">▤</span><span class="metric-label">Rascunhos de relatório</span><strong id="metric-relatorios">0</strong><small>Aguardando revisão</small></article>
+        <article class="metric"><span class="metric-icon">↔</span><span class="metric-label">Conexão com 1Doc</span><strong class="pending">Pendente</strong><small>Requer API autorizada</small></article>
+      </div>
+      <div class="section-heading"><div><h3>Como funciona</h3><p>Fluxo sugerido para cada processo ambiental.</p></div></div>
+      <div class="steps">
+        <article><span>01</span><h4>Identifique o processo</h4><p>Informe os dados do processo ou use a consulta 1Doc quando a integração estiver habilitada.</p></article>
+        <article><span>02</span><h4>Registre a vistoria</h4><p>Preencha observações, localização, medidas e anexe fotos e documentos.</p></article>
+        <article><span>03</span><h4>Gere e revise</h4><p>Prepare o relatório preliminar, confira evidências e valide a legislação aplicável.</p></article>
+      </div>
+      <div class="notice"><strong>Importante:</strong> este painel salva dados na sua conta Supabase. Não consulta a 1Doc nem valida automaticamente a legislação. Todo documento deve ser conferido e aprovado por profissional habilitado antes do uso oficial.</div>
+    </section>
+
+    <section class="view" id="view-vistoria">
+      <div class="form-intro"><div><span class="eyebrow">REGISTRO DE CAMPO</span><h2>Nova vistoria ambiental</h2><p>Preencha os dados disponíveis. Campos com * são obrigatórios.</p></div><span class="draft-badge">RASCUNHO</span></div>
+      <form id="inspection-form">
+        <div class="form-card">
+          <h3>1. Identificação do processo</h3>
+          <div class="form-grid">
+            <label>Número do processo / protocolo *<input name="processo" required placeholder="Ex.: 00000.000000/2026-00"></label>
+            <label>Origem / sistema<select name="origem"><option>1Doc (informação manual)</option><option>Processo externo</option><option>Demanda de fiscalização</option><option>Outro</option></select></label>
+            <label>Interessado / empreendimento *<input name="interessado" required placeholder="Nome da pessoa ou empresa"></label>
+            <label>Município *<select name="municipio" required><option value="">Selecione</option><option>Macapá</option><option>Santana</option><option>Tartarugalzinho</option><option>Porto Grande</option><option>Mazagão</option><option>Oiapoque</option><option>Outro município do Amapá</option><option>Outro</option></select></label>
+            <label>Data da vistoria *<input name="data" type="date" required></label>
+            <label>Responsável técnico<input name="tecnico" placeholder="Nome e registro profissional"></label>
+            <label class="wide">Objetivo da vistoria *<textarea name="objetivo" required rows="2" placeholder="Descreva a finalidade da vistoria"></textarea></label>
+          </div>
+        </div>
+        <div class="form-card">
+          <h3>2. Localização e constatações</h3>
+          <div class="form-grid">
+            <label>Coordenadas / referência<input name="coordenadas" placeholder="Ex.: latitude, longitude ou ponto de referência"></label>
+            <label>Tipo de atividade<select name="atividade"><option>Selecione</option><option>Limpeza de área</option><option>Supressão vegetal</option><option>Licenciamento ambiental</option><option>Recursos hídricos / poço</option><option>Resíduos sólidos</option><option>Agropecuária</option><option>Outra atividade</option></select></label>
+            <label class="wide">Descrição das condições observadas *<textarea name="observacoes" required rows="5" placeholder="Registre fatos observáveis, dimensões, condições ambientais e evidências. Separe fatos de interpretações."></textarea></label>
+            <label class="wide">Possíveis impactos / não conformidades<textarea name="impactos" rows="3" placeholder="Descreva apenas o que foi observado ou indique que precisa de apuração"></textarea></label>
+            <label class="wide">Recomendações iniciais<textarea name="recomendacoes" rows="3" placeholder="Medidas sugeridas para avaliação técnica"></textarea></label>
+          </div>
+        </div>
+        <div class="form-card">
+          <h3>3. Evidências anexas</h3>
+          <p class="muted">Selecione fotografias, PDFs ou outros documentos. Os arquivos são salvos em armazenamento privado. Limite de 20 MB por arquivo.</p>
+          <label class="upload-zone"><input id="evidencias" type="file" multiple accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt"><span class="upload-icon">↑</span><strong>Escolha arquivos </strong><small>Fotos, documentos, planilhas e PDFs</small></label>
+          <div id="file-list" class="file-list"></div>
+        </div>
+        <div class="form-actions"><button type="button" class="secondary" id="clear-form">Limpar formulário</button><button type="submit" class="primary">Salvar vistoria e preparar relatório →</button></div>
+      </form>
+    </section>
+
+    <section class="view" id="view-relatorios">
+      <div class="form-intro"><div><span class="eyebrow">DOCUMENTOS TÉCNICOS</span><h2>Relatórios e pareceres</h2><p>Consulte os rascunhos salvos na sua conta e exporte o texto para revisão.</p></div><button class="primary" data-go="vistoria">＋ Nova vistoria</button></div>
+      <div id="reports-list" class="reports-list"><div class="empty-state"><span>▤</span><h3>Nenhum rascunho salvo</h3><p>Registre uma vistoria para preparar o primeiro documento.</p></div></div>
+    </section>
+
+    <section class="view" id="view-integracao">
+      <div class="form-intro"><div><span class="eyebrow">CONFIGURAÇÃO TÉCNICA</span><h2>Integração com 1Doc</h2><p>Preparação para conexão segura com a API autorizada.</p></div><span class="draft-badge">NÃO CONECTADO</span></div>
+      <div class="form-card">
+        <h3>Estado da integração</h3>
+        <div class="integration-row"><span class="integration-icon">↔</span><div><strong>API 1Doc</strong><p>Conexão real não configurada. Nenhuma credencial foi solicitada ou armazenada neste protótipo.</p></div><span class="state-pill">Pendente</span></div>
+        <h3 class="subhead">Antes de habilitar a conexão</h3>
+        <ul class="check-list"><li>Obter documentação oficial e autorização do administrador da instância 1Doc.</li><li>Confirmar métodos disponíveis para consultar processos, baixar documentos e anexar arquivos.</li><li>Implementar autenticação no servidor, com segredos fora do navegador e do repositório.</li><li>Usar HTTPS com validação de certificado; nunca desativar a verificação SSL.</li><li>Restringir permissões e registrar logs de acesso e alterações.</li><li>Exigir confirmação humana antes de anexar documentos ou alterar processos.</li></ul>
+        <div class="notice warning"><strong>Segurança:</strong> não cole tokens, senhas ou segredos neste formulário nem em mensagens. A conexão deve ser configurada no ambiente de servidor seguro.</div>
+      </div>
+      <div class="form-card"><h3>Arquitetura planejada</h3><div class="architecture"><div>1Doc<small>Processos e documentos</small></div><b>→</b><div>Servidor seguro<small>API + autenticação</small></div><b>→</b><div>SEBASTIAN 1Doc<small>Vistoria e análise</small></div><b>→</b><div>Revisão técnica<small>Exportação / anexação</small></div></div></div>
+    </section>
+    <footer>SEBASTIAN 1Doc · Inteligência Ambiental Integrada <span>Dashboard · versão 1.0</span></footer>
+  </div></main>
+  <div id="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
